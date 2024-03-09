@@ -24,6 +24,7 @@ specific language governing permissions and limitations under the License.
 #include "pico/mutex.h"
 #include "pico/sem.h"
 #include "pico/types.h"
+#include "ws2812.pio.h"
 
 #define SPI_FILL_CHAR (0xFF)
 
@@ -76,14 +77,14 @@ void set_spi_dma_irq_channel(bool useChannel1, bool shared);
 #endif
 
 #if USE_LED
-#  define LED_PIN 25
-#  define LED_INIT()                     \
-    {                                    \
-        gpio_init(LED_PIN);              \
-        gpio_set_dir(LED_PIN, GPIO_OUT); \
+#  define LED_PIN 21
+#  define LED_INIT()                                                       \
+    {                                                                      \
+        uint offset = pio_add_program(pio1, &ws2812_program);              \
+        ws2812_program_init(pio1, 0, offset, LED_PIN, 800000, true);    \
     }
-#  define LED_ON() gpio_put(LED_PIN, 1)
-#  define LED_OFF() gpio_put(LED_PIN, 0)
+#  define LED_ON() pio_sm_put_blocking(pio1, 0, 134217728)
+#  define LED_OFF() pio_sm_put_blocking(pio1, 0, 0)
 #else
 #  define LED_ON()
 #  define LED_OFF()

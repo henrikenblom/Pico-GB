@@ -5,6 +5,9 @@ include(pico_sdk_import.cmake)
 project(RP2040_GB C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
+set(PICO_BOARD solderparty_rp2040_stamp)
+set(BOARD pico_sdk)
+set(FAMILY rp2040)
 
 pico_sdk_init()
 
@@ -17,6 +20,7 @@ add_executable(RP2040_GB
         ext/i2s/i2s.c
 )
 
+pico_generate_pio_header(RP2040_GB ${CMAKE_CURRENT_LIST_DIR}/ext/ws2812.pio)
 pico_generate_pio_header(RP2040_GB ${CMAKE_CURRENT_LIST_DIR}/ext/i2s/audio_i2s.pio)
 
 target_include_directories(RP2040_GB PRIVATE inc ext/minigb_apu ext/i2s)
